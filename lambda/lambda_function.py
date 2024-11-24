@@ -12,6 +12,6 @@ def lambda_handler(event, context):
     """
     return {
         'statusCode': 200,  # Indicate successful execution
-        'body': json.dumps("Hello from CIDC Lambda")  # Serialize the message as JSON
+        'body': json.dumps("Hello from CIDC updated Lambda")  # Serialize the message as JSON
     }
 
