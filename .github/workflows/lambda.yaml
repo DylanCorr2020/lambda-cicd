@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "lambda/"
+      - "lambda/**" # Updated to match all files within the lambda directory
 
 jobs:
   deploy-lambda:
