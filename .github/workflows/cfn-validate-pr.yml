@@ -10,7 +10,7 @@ permissions:
   contents: read # Grants read access to the repository contents.
 
 jobs:
-  validate-cfn: # Defines the job for validating the CloudFormation template.
+  validate-cfn: # Defines the job for validating the CloudFormation template changing again .
     runs-on: ubuntu-latest # Specifies the runner environment as an Ubuntu virtual machine.
 
     steps:
