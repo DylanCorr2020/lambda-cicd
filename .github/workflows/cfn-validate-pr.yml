@@ -6,7 +6,7 @@ on:
       - "cloud-formation/**"
 
 permissions:
-  pull_request: write
+  pull_requests: write
   contents: read
 
 jobs:
