@@ -18,6 +18,7 @@ Resources:
       Tags:
         - Key: Environment
           Value: !Ref Environment
+        
 
 Outputs:
   BucketName:
