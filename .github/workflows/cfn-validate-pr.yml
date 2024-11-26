@@ -1,7 +1,7 @@
 name: Validate CloudFormation on PR # Specifies the workflow name.
 
 on:
-  pull_requests: # Triggers the workflow on pull request events.
+  pull_request: # Triggers the workflow on pull request events.
     paths: # Specifies the paths to monitor for changes.
       - "cloud-formation/**" # Trigger only if files in the "cloud-formation/" directory are modified.
 
