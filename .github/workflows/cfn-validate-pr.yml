@@ -1,4 +1,4 @@
-name: Validate AWS S3 Bucket # Specifies the workflow name.
+name: Validate CloudFormation on PR # Specifies the workflow name.
 
 on:
   pull_requests: # Triggers the workflow on pull request events.
@@ -6,7 +6,7 @@ on:
       - "cloud-formation/**" # Trigger only if files in the "cloud-formation/" directory are modified.
 
 permissions:
-  pull_requests: write # Allows writing comments to pull requests.
+  pull_request: write # Allows writing comments to pull requests.
   contents: read # Grants read access to the repository contents.
 
 jobs:
