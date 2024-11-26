@@ -52,7 +52,7 @@ jobs:
         - name: configure AWS Credentials
           uses: aws-actions/configure-aws-credentials@v1
           with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Retrieves AWS Access Key from secrets.
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Retrieves AWS Access Key from secrets changes.
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Retrieves AWS Secret Key from secrets.
             aws-region: eu-west-1 # Sets the AWS region to "eu-west-1".
 
