@@ -1,0 +1,62 @@
+name: Validate AWS S3 Bucket # Specifies the workflow name.
+
+on:
+  pull_requests: # Triggers the workflow on pull request events.
+    paths: # Specifies the paths to monitor for changes.
+      - "cloud-formation/**" # Trigger only if files in the "cloud-formation/" directory are modified.
+
+permissions:
+  pull_requests: write # Allows writing comments to pull requests.
+  contents: read # Grants read access to the repository contents.
+
+jobs:
+  validate-cfn: # Defines the job for validating the CloudFormation template.
+    runs-on: ubuntu-latest # Specifies the runner environment as an Ubuntu virtual machine.
+
+    steps:
+      - uses: actions/checkout@v2 # Checks out the repository code into the runner environment.
+
+      - name: Configure AWS Credentials # Configures AWS credentials for the runner.
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Retrieves AWS Access Key from secrets.
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Retrieves AWS Secret Key from secrets.
+          aws-region: eu-west-1 # Sets the AWS region to "eu-west-1".
+
+      - name: Validate CloudFormation Templates # Validates the CloudFormation template.
+        run: |
+          aws cloudformation validate-template --template-body file://cloud-formation/s3-bucket.yml
+        # Issue: Ensure the "s3-bucket.yml" file exists in the specified directory.
+
+      - name: Deploy Your Stack # Deploys a test stack using the CloudFormation template.
+        run: |
+          stack_name="pr-test-stack-${{github.event.pull_request.number}}" # Sets the stack name dynamically.
+          aws cloudformation create-stack --stack-name $stack_name --template-body file://cloud-formation/s3-bucket.yml --parameters ParameterKey=Environment,ParameterValue=test
+
+      - name: Comment on the PR # Adds a comment to the pull request.
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # Provides authentication to access the GitHub API.
+          script: |
+            github.rest.issues.createComment({ # Corrected "createComponent" to "createComment".
+              issue_number: context.issue.number, # Specifies the PR to comment on.
+              owner: context.repo.owner, # Specifies the repository owner.
+              repo: context.repo.repo, # Specifies the repository name.
+              body: `CloudFormation test stack deployed. Stack name: pr-test-stack-${{github.event.pull_request.number}}` # Includes the stack name in the comment.
+            })
+
+    cleanup-on-merge:
+      runs-on: ubuntu-latest
+      if: github.event.pull_request == true
+      steps:
+        - name: configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # Retrieves AWS Access Key from secrets.
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Retrieves AWS Secret Key from secrets.
+            aws-region: eu-west-1 # Sets the AWS region to "eu-west-1".
+
+        - name: Delete Test Stack # Deletes the test stack deployed for the pull request.
+          run: |
+            stack_name='pr-test-stack-${{ github.event.pull_request.number }}'
+            aws cloudformation delete-stack --stack-name $stack_name
